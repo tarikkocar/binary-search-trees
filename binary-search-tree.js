@@ -31,25 +31,18 @@ class Tree {
     return rootNode;
   }
 
-  insert(value) {
-    const newNode = new Node(value);
-    let currentNode = this.root;
-
-    while (true) {
-      if (newNode.value < currentNode.value) {
-        if (currentNode.leftChild === null) {
-          currentNode.leftChild = newNode;
-          break;
-        }
-        currentNode = currentNode.leftChild;
-      } else {
-        if (currentNode.rightChild === null) {
-          currentNode.rightChild = newNode;
-          break;
-        }
-        currentNode = currentNode.rightChild;
-      }
+  insert(value, node = this.root) {
+    if (node === null) {
+      node = new Node(value);
     }
+
+    if (value < node.value) {
+      node.leftChild = this.insert(value, node.leftChild);
+    } else if (node.value < value) {
+      node.rightChild = this.insert(value, node.rightChild);
+    }
+
+    return node;
   }
 
   delete(value, node = this.root) {
@@ -83,20 +76,91 @@ class Tree {
     return node;
   }
 
-  find(value) {
-    let currentNode = this.root;
-
-    while (currentNode !== null) {
-      if (value === currentNode.value) {
-        return currentNode;
-      } else if (value < currentNode.value) {
-        currentNode = currentNode.leftChild;
-      } else {
-        currentNode = currentNode.rightChild;
-      }
+  find(value, node = this.root) {
+    if (node === null || node.value === value) {
+      return node;
     }
-    return currentNode;
+
+    if (value < node.value) {
+      return this.find(value, node.leftChild);
+    } else {
+      return this.find(value, node.rightChild);
+    }
   }
+
+  levelOrder(node = this.root, orderedList = [], queue = []) {
+    if (node === null) {
+      return;
+    }
+
+    orderedList.push(node.value);
+    queue.push(node.leftChild);
+    queue.push(node.rightChild);
+
+    while (queue.length) {
+      let currentNode = queue[0];
+      queue.shift();
+      this.levelOrder(currentNode, orderedList, queue);
+    }
+
+    return orderedList;
+  }
+
+  preOrder(node = this.root, orderedList = []) {
+    if (node === null) {
+      return;
+    }
+
+    orderedList.push(node.value);
+
+    if (node.leftChild) {
+      this.preOrder(node.leftChild, orderedList);
+    }
+
+    if (node.rightChild) {
+      this.preOrder(node.rightChild, orderedList);
+    }
+
+    return orderedList;
+  }
+
+  inOrder(node = this.root, orderedList = []) {
+    if (node === null) {
+      return;
+    }
+
+    if (node.leftChild) {
+      this.inOrder(node.leftChild, orderedList);
+    }
+
+    orderedList.push(node.value);
+
+    if (node.rightChild) {
+      this.inOrder(node.rightChild, orderedList);
+    }
+
+    return orderedList;
+  }
+
+  postOrder(node = this.root, orderedList = []) {
+    if (node === null) {
+      return;
+    }
+
+    if (node.leftChild) {
+      this.postOrder(node.leftChild, orderedList);
+    }
+
+    if (node.rightChild) {
+      this.postOrder(node.rightChild, orderedList);
+    }
+
+    orderedList.push(node.value);
+
+    return orderedList;
+  }
+
+  height(value, node = this.root) {}
 
   prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null) {
@@ -127,14 +191,19 @@ console.log(newTree.root);
 newTree.prettyPrint(newTree.root);
 // newTree.insert(10);
 // newTree.prettyPrint(newTree.root);
+// console.log(newTree.levelOrder());
+// console.log(newTree.preOrder());
+// console.log(newTree.inOrder());
+// console.log(newTree.postOrder());
+// console.log(newTree.height(4));
 // console.log(newTree.find(9));
-// console.log(newTree.find(15));
+// console.log(newTree.find(8));
 // newTree.delete(3);
 // newTree.prettyPrint(newTree.root);
 // newTree.delete(5);
 // newTree.prettyPrint(newTree.root);
 
-let newTree2 = new Tree(newArray2);
-newTree2.prettyPrint(newTree2.root);
-newTree2.delete(1);
-newTree2.prettyPrint(newTree2.root);
+// let newTree2 = new Tree(newArray2);
+// newTree2.prettyPrint(newTree2.root);
+// newTree2.delete(1);
+// newTree2.prettyPrint(newTree2.root);
