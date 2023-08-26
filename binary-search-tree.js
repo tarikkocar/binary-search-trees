@@ -39,20 +39,64 @@ class Tree {
       if (newNode.value < currentNode.value) {
         if (currentNode.leftChild === null) {
           currentNode.leftChild = newNode;
-          return;
+          break;
         }
         currentNode = currentNode.leftChild;
       } else {
         if (currentNode.rightChild === null) {
           currentNode.rightChild = newNode;
-          return;
+          break;
         }
         currentNode = currentNode.rightChild;
       }
     }
   }
 
-  delete(value) {}
+  delete(value, node = this.root) {
+    if (node === null) {
+      throw new Error("Value not found.");
+    }
+
+    if (value < node.value) {
+      node.leftChild = this.delete(value, node.leftChild);
+    } else if (value > node.value) {
+      node.rightChild = this.delete(value, node.rightChild);
+    }
+    // Node found
+    else {
+      // Node has no children or only one child
+      if (node.leftChild === null) {
+        return node.rightChild;
+      } else if (node.rightChild === null) {
+        return node.leftChild;
+      }
+
+      // Node has two children
+      let nextMinNode = node.rightChild;
+      while (nextMinNode.leftChild !== null) {
+        nextMinNode = nextMinNode.leftChild;
+      }
+      node.value = nextMinNode.value;
+      node.rightChild = this.delete(nextMinNode.value, node.rightChild);
+    }
+
+    return node;
+  }
+
+  find(value) {
+    let currentNode = this.root;
+
+    while (currentNode !== null) {
+      if (value === currentNode.value) {
+        return currentNode;
+      } else if (value < currentNode.value) {
+        currentNode = currentNode.leftChild;
+      } else {
+        currentNode = currentNode.rightChild;
+      }
+    }
+    return currentNode;
+  }
 
   prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null) {
@@ -76,9 +120,21 @@ class Tree {
   }
 }
 
-// let newArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-// let newTree = new Tree(newArray);
-// console.log(newTree.root);
-// newTree.prettyPrint(newTree.root);
+let newArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
+let newArray2 = [1, 7];
+let newTree = new Tree(newArray);
+console.log(newTree.root);
+newTree.prettyPrint(newTree.root);
 // newTree.insert(10);
 // newTree.prettyPrint(newTree.root);
+// console.log(newTree.find(9));
+// console.log(newTree.find(15));
+// newTree.delete(3);
+// newTree.prettyPrint(newTree.root);
+// newTree.delete(5);
+// newTree.prettyPrint(newTree.root);
+
+let newTree2 = new Tree(newArray2);
+newTree2.prettyPrint(newTree2.root);
+newTree2.delete(1);
+newTree2.prettyPrint(newTree2.root);
