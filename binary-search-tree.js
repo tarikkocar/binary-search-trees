@@ -160,7 +160,76 @@ class Tree {
     return orderedList;
   }
 
-  height(value, node = this.root) {}
+  height(value, node = this.root) {
+    if (node === null) {
+      return -1;
+    }
+
+    if (value === node.value) {
+      return this.subtreeHeight(node);
+    }
+
+    if (value < node.value) {
+      return this.height(value, node.leftChild);
+    } else {
+      return this.height(value, node.rightChild);
+    }
+  }
+
+  subtreeHeight(node) {
+    if (node === null) {
+      return -1;
+    }
+
+    const leftHeight = this.subtreeHeight(node.leftChild);
+    const rightHeight = this.subtreeHeight(node.rightChild);
+
+    return Math.max(leftHeight, rightHeight) + 1;
+  }
+
+  depth(value, node = this.root) {
+    if (node === null) {
+      return -1;
+    }
+
+    if (value === node.value) {
+      return 0;
+    }
+
+    if (value < node.value) {
+      const leftDepth = this.depth(value, node.leftChild);
+      if (leftDepth === -1) {
+        return -1;
+      }
+      return leftDepth + 1;
+    } else {
+      const rightDepth = this.depth(value, node.rightChild);
+      if (rightDepth === -1) {
+        return -1;
+      }
+      return rightDepth + 1;
+    }
+  }
+
+  isBalanced(node = this.root) {
+    if (node === null) {
+      return true;
+    }
+
+    const leftHeight = this.subtreeHeight(node.leftChild);
+    const rightHeight = this.subtreeHeight(node.rightChild);
+
+    if (Math.abs(leftHeight - rightHeight) > 1) {
+      return false;
+    }
+
+    return this.isBalanced(node.leftChild) && this.isBalanced(node.rightChild);
+  }
+
+  reBalance() {
+    let values = this.levelOrder();
+    return (this.root = this.buildTree(values));
+  }
 
   prettyPrint(node, prefix = "", isLeft = true) {
     if (node === null) {
@@ -184,26 +253,33 @@ class Tree {
   }
 }
 
-let newArray = [1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324];
-let newArray2 = [1, 7];
-let newTree = new Tree(newArray);
-console.log(newTree.root);
-newTree.prettyPrint(newTree.root);
-// newTree.insert(10);
-// newTree.prettyPrint(newTree.root);
-// console.log(newTree.levelOrder());
-// console.log(newTree.preOrder());
-// console.log(newTree.inOrder());
-// console.log(newTree.postOrder());
-// console.log(newTree.height(4));
-// console.log(newTree.find(9));
-// console.log(newTree.find(8));
-// newTree.delete(3);
-// newTree.prettyPrint(newTree.root);
-// newTree.delete(5);
-// newTree.prettyPrint(newTree.root);
+let randomNumbers = [];
+for (let i = 0; i < 15; i++) {
+  randomNumbers.push(Math.floor(Math.random() * 100));
+}
+console.log("Random numbers array:", randomNumbers);
+const newTree = new Tree(randomNumbers);
+console.log(newTree.prettyPrint(newTree.root));
+console.log("Is balanced:", newTree.isBalanced());
 
-// let newTree2 = new Tree(newArray2);
-// newTree2.prettyPrint(newTree2.root);
-// newTree2.delete(1);
-// newTree2.prettyPrint(newTree2.root);
+console.log("Level order:", newTree.levelOrder());
+console.log("Preorder:", newTree.preOrder());
+console.log("Inorder:", newTree.inOrder());
+console.log("Postorder:", newTree.postOrder());
+
+newTree.insert(110);
+newTree.insert(120);
+newTree.insert(130);
+
+console.log("Is balanced:", newTree.isBalanced());
+
+newTree.reBalance();
+
+console.log("Is balanced:", newTree.isBalanced());
+
+console.log(newTree.prettyPrint(newTree.root));
+
+console.log("Level order:", newTree.levelOrder());
+console.log("Preorder:", newTree.preOrder());
+console.log("Inorder:", newTree.inOrder());
+console.log("Postorder:", newTree.postOrder());
